@@ -45,10 +45,10 @@ export default function Home() {
             <h1>Meaning</h1>
             <hr />
             <div className={styles.cardscontainer}>
-              {wordDetails.meanings.map(meaning => <div className={styles.card}>
+              {wordDetails.meanings.map(meaning => <div key={Math.random()} className={styles.card}>
                 <h2>Part of speech <h6>{meaning.partOfSpeech}</h6></h2>
                 <h2>Defination <h6>{meaning.definitions[0].definition}</h6></h2>
-                {meaning?.synonyms?.length > 0 && <h2>Synonyms {meaning.synonyms.map(d => <h6>{d}</h6>)} </h2>}
+                {meaning?.synonyms?.length > 0 && <h2>Synonyms {meaning.synonyms.map(d => <h6 key={Math.random()}>{d}</h6>)} </h2>}
               </div>)}
             </div>
           </div>}
