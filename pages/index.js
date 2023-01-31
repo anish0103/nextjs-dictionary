@@ -4,21 +4,32 @@ import Image from 'next/image'
 
 import styles from '@/styles/Home.module.css'
 import SearchIcon from '../assets/searchicon.png'
+import SpeakerIcon from '../assets/speakericon.png'
 
 export default function Home() {
   const [text, setText] = useState('')
   const [wordDetails, setWordDetails] = useState({})
 
   const SearchHandler = async () => {
-    if(text.trim().length <= 0) {
+    if (text.trim().length <= 0) {
       return alert("Please enter some text!")
     }
-    const response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${text}`)
+    const wordData = { word: text }
+    const response = await fetch(`/api/word/`,
+      {
+        method: "POST",
+        body: JSON.stringify(wordData)
+      })
     const data = await response.json()
-    if(!response.ok) {
-      alert(`Information related to ${text} does not exist!`)
+    if (!response.ok) {
+      return alert(`Information related to ${text} does not exist!`)
     }
-    setWordDetails(data[0])
+    setWordDetails(data.data.results)
+  }
+
+  function play() {
+    var audio = document.getElementById('audio');
+    audio.play();
   }
 
   return (
@@ -33,25 +44,31 @@ export default function Home() {
       <div className={styles.maincontainer}>
         <div className={styles.inputcontainer}>
           <input value={text} placeholder='What would you like to search?' onChange={(e) => setText(e.target.value)} />
-          <button onClick={SearchHandler}><Image src={SearchIcon} alt="Picture of the author" /></button>
+          <button onClick={SearchHandler}><Image src={SearchIcon} alt="Search" /></button>
         </div>
-        {wordDetails?.word != undefined && <div className={styles.contentcontainer}>
+        {wordDetails[0]?.id != undefined && <div className={styles.contentcontainer}>
           <div className={styles.contentdetailcontainer}>
             <h1>Word</h1>
             <hr />
-            <p>{wordDetails.word}</p>
+            <p>{wordDetails[0].id} <button onClick={play}><Image src={SpeakerIcon} alt="Speaker" /></button></p>
           </div>
-          {wordDetails.meanings.length > 0 && <div className={styles.contentdetailcontainer}>
+          <audio id='audio' src={wordDetails[0].lexicalEntries[0].entries[0].pronunciations[0].audioFile}></audio>
+          <div className={styles.contentdetailcontainer}>
             <h1>Meaning</h1>
             <hr />
-            <div className={styles.cardscontainer}>
-              {wordDetails.meanings.map(meaning => <div key={Math.random()} className={styles.card}>
-                <h2>Part of speech <h6>{meaning.partOfSpeech}</h6></h2>
-                <h2>Defination <h6>{meaning.definitions[0].definition}</h6></h2>
-                {meaning?.synonyms?.length > 0 && <h2>Synonyms {meaning.synonyms.map(d => <h6 key={Math.random()}>{d}</h6>)} </h2>}
-              </div>)}
-            </div>
-          </div>}
+            {wordDetails.length > 0 && wordDetails.map(result =>
+              <div className={styles.cardscontainer}>
+                {result.lexicalEntries.map(meaning =>
+                  <div key={Math.random()} className={styles.card}>
+                    <h2>Part of speech <h6>{meaning.lexicalCategory.id}</h6></h2>
+                    <h2>Defination <h6>{meaning.entries[0].senses[0].definitions[0]}</h6></h2>
+                    {meaning?.entries[0]?.senses[0]?.examples.length > 0 && <h2>Example {meaning?.entries[0]?.senses[0].examples.map(d => <h6 key={Math.random()}>{d.text}</h6>)} </h2>}
+                    {meaning?.entries[0]?.senses[0]?.synonyms != undefined && <h2>Synonyms <div className={styles.synonymscontainer}>{meaning?.entries[0]?.senses[0].synonyms.map(d => <h6 key={Math.random()}>{d.text},</h6>)}</div> </h2>}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>}
       </div>
     </>
