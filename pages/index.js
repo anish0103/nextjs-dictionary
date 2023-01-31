@@ -24,6 +24,7 @@ export default function Home() {
     if (!response.ok) {
       return alert(`Information related to ${text} does not exist!`)
     }
+    console.log(data.data.results)
     setWordDetails(data.data.results)
   }
 
@@ -61,9 +62,9 @@ export default function Home() {
                 {result.lexicalEntries.map(meaning =>
                   <div key={Math.random()} className={styles.card}>
                     <h2>Part of speech <h6>{meaning.lexicalCategory.id}</h6></h2>
-                    <h2>Defination <h6>{meaning.entries[0].senses[0].definitions[0]}</h6></h2>
-                    {meaning?.entries[0]?.senses[0]?.examples.length > 0 && <h2>Example {meaning?.entries[0]?.senses[0].examples.map(d => <h6 key={Math.random()}>{d.text}</h6>)} </h2>}
-                    {meaning?.entries[0]?.senses[0]?.synonyms != undefined && <h2>Synonyms <div className={styles.synonymscontainer}>{meaning?.entries[0]?.senses[0].synonyms.map(d => <h6 key={Math.random()}>{d.text},</h6>)}</div> </h2>}
+                    <h2>Defination <h6>{meaning?.entries[0]?.senses != undefined && meaning?.entries[0]?.senses[0]?.definitions[0]}</h6></h2>
+                    {meaning?.entries[0]?.senses != undefined && meaning?.entries[0]?.senses[0]?.examples != undefined && <h2>Example {meaning?.entries[0]?.senses[0].examples.map(d => <h6 key={Math.random()}>{d.text}</h6>)} </h2>}
+                    {meaning?.entries[0]?.senses != undefined && meaning?.entries[0]?.senses[0]?.synonyms != undefined && <h2>Synonyms <div className={styles.synonymscontainer}>{meaning?.entries[0]?.senses[0].synonyms.map(d => <h6 key={Math.random()}>{d.text},</h6>)}</div> </h2>}
                   </div>
                 )}
               </div>
