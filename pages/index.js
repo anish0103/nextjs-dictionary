@@ -57,7 +57,7 @@ export default function Home() {
             <h1>Meaning</h1>
             <hr />
             {wordDetails.length > 0 && wordDetails.map(result =>
-              <div className={styles.cardscontainer}>
+              <div key={Math.random()} className={styles.cardscontainer}>
                 {result.lexicalEntries.map(meaning =>
                   <div key={Math.random()} className={styles.card}>
                     <h2>Part of speech <h6>{meaning.lexicalCategory.id}</h6></h2>
